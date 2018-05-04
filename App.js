@@ -1,5 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, Animated, PanResponder } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TouchableOpacity,
+  Image as RNImage,
+  Dimensions,
+  Animated
+} from 'react-native';
+import Image from 'react-native-remote-svg';
+import checkIcon from './assets/checked.svg';
+import cancelIcon from './assets/cancel.svg';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -13,51 +24,24 @@ const Users = [
 
 export default class App extends React.Component {
 
-  constructor() {
-    super()
-
-    this.position = new Animated.ValueXY()
-    this.state = {
-      currentIndex: 0,
-    }
-  }
-
-  componentWillMount() {
-    this.PanResponder = PanResponder.create({
-      onStartShouldSetPanResponder:(evt,gestureState) => true,
-      onPanResponderMove:(evt,gestureState) => {
-
-        this.position.setValue({x: gestureState.dx, y: gestureState.dy})
-      },
-      onPanResponderRelease:(evt,gestureState) => {
-
-      }
-    })
-  }
-
-  renderUsers =  () => {
-    return Users.map((item, i) => {
-
-      return (
-        <Animated.View key={item.id} {...this.PanResponder.panHandlers}
-          style={[{transform: this.position.getTranslateTransform()}, {height:SCREEN_HEIGHT-120, width:SCREEN_WIDTH, padding: 10, position: 'absolute' }]} >
-          <Image style={{flex:1, height:null, width:null, resizeMode:'cover', borderRadius: 20}} source={item.uri} />
-        </Animated.View>
-      )
-    }).reverse();
-  }
-
   render() {
     return (
-      <View style={{flex: 1}} >
-        <View style={{height: 60}} >
-
+      <View style={styles.container} >
+        <View style={styles.toolbar} />
+        <View style={styles.cardArea} >
+          {Users.map((user, index) => (
+            <Animated.View style={[styles.card, {transform: [{translateY: index * 12}], padding: (index + 5) * 5}]} key={user.id} >
+              <RNImage style={styles.cardImg} source={user.uri} />
+            </Animated.View>
+          )).reverse()}
         </View>
-        <View style={{flex: 1}} >
-          {this.renderUsers()}
-        </View>
-        <View style={{height: 60}} >
-
+        <View style={styles.btnContainer}>
+          <TouchableOpacity style={styles.btn}>
+            <Image source={checkIcon} style={styles.btnIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btn}>
+            <Image source={cancelIcon} style={styles.btnIcon} />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -67,8 +51,51 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
+    alignItems: 'stretch',
+  },
+  toolbar: {
+    height: 50,
+  },
+  cardArea: {
+    height: 'auto',
+    flex: 1,
+    paddingHorizontal: 15
+  },
+  btnContainer: {
+    height: 120, 
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btn: {
+    height: 70,
+    width: 70,
+    borderRadius: 35,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 15,
+    backgroundColor: '#efefef'
   },
+  btnIcon: {
+    height: 25,
+    width: 25,
+  },
+  cardImg: {
+    borderRadius: 10,
+    height: null,
+    width: null,
+    resizeMode: 'cover',
+    flex: 1,
+  },
+  card: {
+    position: 'absolute',
+    height: SCREEN_HEIGHT - 170,
+    width: SCREEN_WIDTH,
+    shadowOffset:{ width: 0,  height: 2, },
+    shadowOpacity: .2,
+    shadowRadius: 15,
+  }
 });
