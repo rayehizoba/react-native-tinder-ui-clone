@@ -4,42 +4,98 @@ import {
   Text, 
   View, 
   TouchableOpacity,
-  Image as RNImage,
+  Animated,
   Dimensions,
-  Animated
 } from 'react-native';
 import Image from 'react-native-remote-svg';
 import checkIcon from './assets/checked.svg';
 import cancelIcon from './assets/cancel.svg';
+import Card from "./Card";
+import img1 from './assets/image1.jpg';
+import img2 from './assets/image2.jpg';
+import img3 from './assets/image3.jpg';
+import img4 from './assets/image4.jpg';
+import img5 from './assets/image5.jpg';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const Users = [
-  {id: "1", uri: require('./assets/image1.jpg')},
-  {id: "2", uri: require('./assets/image2.jpg')},
-  {id: "3", uri: require('./assets/image3.jpg')},
-  {id: "4", uri: require('./assets/image4.jpg')},
-  {id: "5", uri: require('./assets/image5.jpg')},
-]
 
 export default class App extends React.Component {
+
+  constructor() {
+    super();
+
+    const cards = [
+      { id: '1', image: img1, isActive: true },
+      { id: '2', image: img2, isActive: false },
+      { id: '3', image: img3, isActive: false },
+      { id: '4', image: img4, isActive: false },
+      { id: '5', image: img5, isActive: false },
+    ];
+    let lastItemPosition = false;
+    cards.forEach((card, i) => {
+      const position = new Animated.ValueXY();
+      card.position = position;
+      card.parentPosition = lastItemPosition;
+      lastItemPosition = position;
+    });
+
+    this.state = {cards};
+  }
+
+  onCardSwiped = (id) => {
+    this.setState(prevState => {
+      const swipedIndex = prevState.cards.findIndex(card => card.id === id);
+      const isLastIndex = swipedIndex === (prevState.cards.length - 1);
+      const nextIndex = swipedIndex + 1;
+      const newState = {...prevState};
+      newState.cards[swipedIndex]['isActive'] = false;
+      if (isLastIndex) return prevState;
+      newState.cards[nextIndex]['isActive'] = true;
+      return newState;
+    });
+  }
+
+  handleNopeSelect = (dy=0, position=false) => {
+    const activeIndex = this.state.cards.findIndex(card => card.isActive);
+    if (activeIndex < 0) return;
+    if (!position) {
+      position = this.state.cards[activeIndex].position;
+    }
+    Animated.spring(position, {
+      toValue: { x: SCREEN_WIDTH + 100, y: dy }
+    }).start(this.onCardSwiped(this.state.cards[activeIndex].id));
+  }
+
+  handleLikeSelect = (dy=0, position=false) => {
+    const activeIndex = this.state.cards.findIndex(card => card.isActive);
+    if (activeIndex < 0) return;
+    if (!position) {
+      position = this.state.cards[activeIndex].position;
+    }
+    Animated.spring(position, {
+      toValue: { x: -SCREEN_WIDTH - 100, y: dy }
+    }).start(this.onCardSwiped(this.state.cards[activeIndex].id));
+  }
+
+  renderCards = (cards) => {
+    return cards.map((card, index) => {
+      return <Card key={card.id} {...card} handleNopeSelect={this.handleNopeSelect} handleLikeSelect={this.handleLikeSelect} />;
+    }).reverse();
+  }
 
   render() {
     return (
       <View style={styles.container} >
         <View style={styles.toolbar} />
         <View style={styles.cardArea} >
-          {Users.map((user, index) => (
-            <Animated.View style={[styles.card, {transform: [{translateY: index * 12}], padding: (index + 5) * 5}]} key={user.id} >
-              <RNImage style={styles.cardImg} source={user.uri} />
-            </Animated.View>
-          )).reverse()}
+          {this.renderCards(this.state.cards)}
         </View>
         <View style={styles.btnContainer}>
-          <TouchableOpacity style={styles.btn}>
+          <TouchableOpacity style={styles.btn} onPress={() => this.handleLikeSelect()} >
             <Image source={checkIcon} style={styles.btnIcon} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn}>
+          <TouchableOpacity style={styles.btn} onPress={() => this.handleNopeSelect()} >
             <Image source={cancelIcon} style={styles.btnIcon} />
           </TouchableOpacity>
         </View>
@@ -57,18 +113,19 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   toolbar: {
-    height: 50,
+    height: 30,
   },
   cardArea: {
     height: 'auto',
     flex: 1,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   btnContainer: {
     height: 120, 
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: -1,
   },
   btn: {
     height: 70,
@@ -77,25 +134,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 15,
-    backgroundColor: '#efefef'
+    backgroundColor: '#efefef',
   },
   btnIcon: {
     height: 25,
     width: 25,
   },
-  cardImg: {
-    borderRadius: 10,
-    height: null,
-    width: null,
-    resizeMode: 'cover',
-    flex: 1,
-  },
-  card: {
-    position: 'absolute',
-    height: SCREEN_HEIGHT - 170,
-    width: SCREEN_WIDTH,
-    shadowOffset:{ width: 0,  height: 2, },
-    shadowOpacity: .2,
-    shadowRadius: 15,
-  }
 });
