@@ -16,34 +16,41 @@ import img2 from './assets/image2.jpg';
 import img3 from './assets/image3.jpg';
 import img4 from './assets/image4.jpg';
 import img5 from './assets/image5.jpg';
+import EmptyState from './EmptyState';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
+
+const getCards = () => {
+  const cards = [
+    { id: '1', image: img1, isActive: true },
+    { id: '2', image: img2, isActive: false },
+    { id: '3', image: img3, isActive: false },
+    { id: '4', image: img4, isActive: false },
+    { id: '5', image: img5, isActive: false },
+  ];
+  let lastItemPosition = false;
+  cards.forEach((card, i) => {
+    const position = new Animated.ValueXY();
+    card.position = position;
+    card.parentPosition = lastItemPosition;
+    lastItemPosition = position;
+  });
+  return cards;
+}
 
 export default class App extends React.Component {
 
   constructor() {
     super();
 
-    const cards = [
-      { id: '1', image: img1, isActive: true },
-      { id: '2', image: img2, isActive: false },
-      { id: '3', image: img3, isActive: false },
-      { id: '4', image: img4, isActive: false },
-      { id: '5', image: img5, isActive: false },
-    ];
-    let lastItemPosition = false;
-    cards.forEach((card, i) => {
-      const position = new Animated.ValueXY();
-      card.position = position;
-      card.parentPosition = lastItemPosition;
-      lastItemPosition = position;
-    });
+    const cards = getCards();
 
     this.state = {cards};
   }
 
   onCardSwiped = (id) => {
+    console.log(this.state);
     this.setState(prevState => {
       const swipedIndex = prevState.cards.findIndex(card => card.id === id);
       const isLastIndex = swipedIndex === (prevState.cards.length - 1);
@@ -84,12 +91,22 @@ export default class App extends React.Component {
     }).reverse();
   }
 
+  reloadCards = () => {
+    const cards = getCards();
+    this.setState({cards});
+  }
+
+  isEmptyState = () => {
+    return this.state.cards.findIndex(card => card.isActive) < 0;
+  }
+
   render() {
     return (
       <View style={styles.container} >
         <View style={styles.toolbar} />
         <View style={styles.cardArea} >
-          {this.renderCards(this.state.cards)}
+          {!this.isEmptyState() && this.renderCards(this.state.cards)}
+          {this.isEmptyState() && <EmptyState reloadCards={this.reloadCards} />}
         </View>
         <View style={styles.btnContainer}>
           <TouchableOpacity style={styles.btn} onPress={() => this.handleLikeSelect()} >
