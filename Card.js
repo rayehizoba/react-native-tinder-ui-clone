@@ -109,41 +109,42 @@ const styles = StyleSheet.create({
   },
   card: {
     position: 'absolute',
-    height: SCREEN_HEIGHT - 120,
+    height: '105%',
     width: SCREEN_WIDTH,
     shadowOffset:{ width: 0,  height: 2, },
     shadowOpacity: .2,
-    shadowRadius: 15,
+    shadowRadius: 5,
   },
   cardTextContainer: {
     position: 'absolute',
-    top: 60,
+    top: 45,
     zIndex: 999,
   },
   cardText: {
     borderWidth: 2,
     fontSize: 30,
     fontWeight: '800',
-    padding: 10
+    padding: 10,
+    borderRadius: 4,
   },
   cardTextContainerLike: {
-    right: 60,
+    right: 45,
     transform: [
       {rotate: '15deg'}
     ]
   },
   cardTextLike: {
-    color: 'lightgreen',
-    borderColor: 'lightgreen',
+    color: '#4bdb79',
+    borderColor: '#4bdb79',
   },
   cardTextContainerNope: {
-    left: 60,
+    left: 45,
     transform: [
       {rotate: '-15deg'}
     ]
   },
   cardTextNope: {
-    color: 'red',
-    borderColor: 'red',
+    color: '#D80027',
+    borderColor: '#D80027',
   }
 });

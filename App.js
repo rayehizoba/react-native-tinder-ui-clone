@@ -11,11 +11,11 @@ import Image from 'react-native-remote-svg';
 import checkIcon from './assets/checked.svg';
 import cancelIcon from './assets/cancel.svg';
 import Card from "./Card";
-import img1 from './assets/image1.jpg';
-import img2 from './assets/image2.jpg';
-import img3 from './assets/image3.jpg';
-import img4 from './assets/image4.jpg';
-import img5 from './assets/image5.jpg';
+import img1 from './assets/image1.jpeg';
+import img2 from './assets/image2.jpeg';
+import img3 from './assets/image3.jpeg';
+import img4 from './assets/image4.jpeg';
+import img5 from './assets/image5.jpeg';
 import EmptyState from './EmptyState';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -50,7 +50,6 @@ export default class App extends React.Component {
   }
 
   onCardSwiped = (id) => {
-    console.log(this.state);
     this.setState(prevState => {
       const swipedIndex = prevState.cards.findIndex(card => card.id === id);
       const isLastIndex = swipedIndex === (prevState.cards.length - 1);
@@ -86,6 +85,8 @@ export default class App extends React.Component {
   }
 
   renderCards = (cards) => {
+    if (this.isEmptyState()) return <EmptyState reloadCards={this.reloadCards} />
+    
     return cards.map((card, index) => {
       return <Card key={card.id} {...card} handleNopeSelect={this.handleNopeSelect} handleLikeSelect={this.handleLikeSelect} />;
     }).reverse();
@@ -103,10 +104,8 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container} >
-        <View style={styles.toolbar} />
         <View style={styles.cardArea} >
-          {!this.isEmptyState() && this.renderCards(this.state.cards)}
-          {this.isEmptyState() && <EmptyState reloadCards={this.reloadCards} />}
+          {this.renderCards(this.state.cards)}
         </View>
         <View style={styles.btnContainer}>
           <TouchableOpacity style={styles.btn} onPress={() => this.handleLikeSelect()} >
@@ -125,20 +124,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     backgroundColor: '#fff',
     alignItems: 'stretch',
   },
-  toolbar: {
-    height: 30,
-  },
   cardArea: {
-    height: 'auto',
-    flex: 1,
-    paddingHorizontal: 15,
+    flex: 10,
+    marginTop: 30
   },
   btnContainer: {
-    height: 120, 
+    flex: 2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
