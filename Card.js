@@ -20,10 +20,10 @@ export default class App extends React.Component {
       outputRange: ['-10deg', '0deg', '10deg'],
       extrapolate: 'clamp',
     });
-    const defaultScale = this.props.isActive ? 0.9 : 0.87;
+    const defaultScale = this.props.isActive ? 0.9 : 0.85;
     this.nextCardScale = this.props.parentPosition ? this.props.parentPosition.x.interpolate({
       inputRange: [-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
-      outputRange: [0.9, 0.87, 0.9],
+      outputRange: [0.9, 0.85, 0.9],
       extrapolate: 'clamp',
     }) : defaultScale;  
     this.rotateAndTranslate = {
@@ -111,9 +111,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: '105%',
     width: SCREEN_WIDTH,
-    shadowOffset:{ width: 0,  height: 2, },
-    shadowOpacity: .2,
-    shadowRadius: 5,
+    // shadowOffset:{ width: 0,  height: 2, },
+    // shadowOpacity: .2,
+    // shadowRadius: 5,
   },
   cardTextContainer: {
     position: 'absolute',
