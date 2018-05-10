@@ -1,3 +1,14 @@
+<p align="center">
+  <img width="150" src="./react-native.svg">
+</p>
+
+# Tinder UI clone
+React native implementation of the Tinder app UI.
+
+<p align="center">
+  <img width="300" src="./preview.gif">
+</p>
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
